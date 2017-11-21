@@ -9,17 +9,33 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    private var changeColorAction: ((UIColor)-> Void)?
+    private var printClosure: (() -> Void)?
+    private var calculateCircumference = { r in
+        return 2 * 3.14 * r
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        printClosure = { print("I love Swift")}
+        printClosure?()
+        guard let nonOptClosure = printClosure else { return }
+        repeatTask(times: 10, task: nonOptClosure)
+        print(calculateCircumference(5))
+        
+        changeColorAction = { [unowned self] color in
+            self.view.backgroundColor = color
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    private func repeatTask(times: Int, task:() -> Void) {
+        for _ in 1...10 {
+            task()
+        }
     }
-
-
+    @IBAction func anyColorButtonClicked(_ sender: UIButton) {
+        guard let colorToSet = sender.backgroundColor else { return }
+        changeColorAction?(colorToSet)
+    }
 }
 
